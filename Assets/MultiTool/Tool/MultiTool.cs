@@ -227,7 +227,14 @@ public class MultiTool : EditorWindow
         ruler.from = EditorGUILayout.Vector3Field("From:", ruler.from);
         if (GUILayout.Button("Capture GameObject's Position"))
         {
-            ruler.from = Selection.activeTransform.position;
+            if (Selection.activeTransform != null)
+            {
+                ruler.from = Selection.activeTransform.position;
+            }
+            else
+            {
+                Debug.LogWarning("Please select an object before trying to capture its position.");
+            }
         }
         EditorGUILayout.Space();
 
@@ -235,7 +242,14 @@ public class MultiTool : EditorWindow
         ruler.to = EditorGUILayout.Vector3Field("To:", ruler.to);
         if (GUILayout.Button("Capture GameObject's Position"))
         {
-            ruler.to = Selection.activeTransform.position;
+            if (Selection.activeTransform != null)
+            {
+                ruler.to = Selection.activeTransform.position;
+            }
+            else
+            {
+                Debug.LogWarning("Please select an object before trying to capture its position.");
+            }
         }
         EditorGUILayout.Space();
 
@@ -499,8 +513,8 @@ public class MultiTool : EditorWindow
                 volume.bounds.size = size;
                 volume.bounds.center = center;
 
-                Vector3 minCorner = Handles.FreeMoveHandle(volume.bounds.min, Quaternion.identity, 0.075f, new Vector3(volume.snap, volume.snap, volume.snap), Handles.RectangleCap);
-                Vector3 maxCorner = Handles.FreeMoveHandle(volume.bounds.max, Quaternion.identity, 0.075f, new Vector3(volume.snap, volume.snap, volume.snap), Handles.RectangleCap);
+                Vector3 minCorner = Handles.FreeMoveHandle(volume.bounds.min, Quaternion.identity, 0.075f, new Vector3(volume.snap, volume.snap, volume.snap), Handles.RectangleHandleCap);
+                Vector3 maxCorner = Handles.FreeMoveHandle(volume.bounds.max, Quaternion.identity, 0.075f, new Vector3(volume.snap, volume.snap, volume.snap), Handles.RectangleHandleCap);
 
                 volume.bounds.min = minCorner;
                 volume.bounds.max = maxCorner;
@@ -521,7 +535,7 @@ public class MultiTool : EditorWindow
 
             case VOLUME_MODE.Sphere:
                 volume.position = Handles.PositionHandle(volume.position, Quaternion.identity);
-                volume.sizer = Handles.FreeMoveHandle(volume.sizer, Quaternion.identity, 0.075f, Vector3.zero, Handles.RectangleCap);
+                volume.sizer = Handles.FreeMoveHandle(volume.sizer, Quaternion.identity, 0.075f, Vector3.zero, Handles.RectangleHandleCap);
                 Vector3 tPos = volume.position + new Vector3(0, -0.25f, 0);
 
                 volume.radius = Vector3.Distance(volume.position, volume.sizer);
@@ -537,8 +551,8 @@ public class MultiTool : EditorWindow
 
                 Quaternion rotOpposite = rotFacing * Quaternion.Euler(0, 90.0f, 0);
 
-                Handles.CircleCap(0, volume.position, rotFacing, volume.radius);
-                Handles.CircleCap(0, volume.position, rotOpposite, volume.radius);
+                Handles.CircleHandleCap(0, volume.position, rotFacing, volume.radius, EventType.Repaint);
+                Handles.CircleHandleCap(0, volume.position, rotOpposite, volume.radius, EventType.Repaint);
 
                 float r = volume.radius * 4 * Mathf.PI;
                 r = MTool.Round(r, decimals);
@@ -555,10 +569,10 @@ public class MultiTool : EditorWindow
 
             case VOLUME_MODE.Plane:
 
-                volume.p1 = Handles.FreeMoveHandle(volume.p1, Quaternion.identity, 0.075f, Vector3.zero, Handles.RectangleCap);
-                volume.p2 = Handles.FreeMoveHandle(volume.p2, Quaternion.identity, 0.075f, Vector3.zero, Handles.RectangleCap);
-                volume.p3 = Handles.FreeMoveHandle(volume.p3, Quaternion.identity, 0.075f, Vector3.zero, Handles.RectangleCap);
-                volume.p4 = Handles.FreeMoveHandle(volume.p4, Quaternion.identity, 0.075f, Vector3.zero, Handles.RectangleCap);
+                volume.p1 = Handles.FreeMoveHandle(volume.p1, Quaternion.identity, 0.075f, Vector3.zero, Handles.RectangleHandleCap);
+                volume.p2 = Handles.FreeMoveHandle(volume.p2, Quaternion.identity, 0.075f, Vector3.zero, Handles.RectangleHandleCap);
+                volume.p3 = Handles.FreeMoveHandle(volume.p3, Quaternion.identity, 0.075f, Vector3.zero, Handles.RectangleHandleCap);
+                volume.p4 = Handles.FreeMoveHandle(volume.p4, Quaternion.identity, 0.075f, Vector3.zero, Handles.RectangleHandleCap);
 
                 Handles.DrawLine(volume.p1, volume.p2);
                 Handles.DrawLine(volume.p2, volume.p3);
@@ -597,7 +611,7 @@ public class MultiTool : EditorWindow
         Handles.DrawLine(t.position, rotMover);
 
         EditorGUI.BeginChangeCheck();
-        rotMover = Handles.FreeMoveHandle(rotMover, Quaternion.identity, 0.075f, Vector3.zero, Handles.RectangleCap);
+        rotMover = Handles.FreeMoveHandle(rotMover, Quaternion.identity, 0.075f, Vector3.zero, Handles.RectangleHandleCap);
         if (EditorGUI.EndChangeCheck())
         {
             // Rotate
