@@ -173,7 +173,7 @@ public class MultiTool : EditorWindow
     }
     void OnLostFocus()
     {
-        SceneView.onSceneGUIDelegate -= OnSceneGUI;
+        //SceneView.onSceneGUIDelegate -= OnSceneGUI;
     }
     void OnEnable()
     {
